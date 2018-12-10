@@ -1,20 +1,19 @@
 import java.util.LinkedList;
-import java.util.Scanner;
 import java.util.HashMap;
 
+/**
+ * Class that handles election data
+ * @author Jean-Luc Pierre-Louis & Roman Wicky van Doyer
+ *
+ */
 class ElectionData {
-  LinkedList<String> ballot = new LinkedList<String>();
-  LinkedList<String> votes = new LinkedList<String>();
-  Scanner keyboard = new Scanner(System.in);
+  private LinkedList<String> ballot = new LinkedList<String>();
   
-  HashMap<String, Integer> candidateFirstVotes = new HashMap<String, Integer>();
-  HashMap<String, Integer> candidateSecondVotes = new HashMap<String, Integer>();
-  HashMap<String, Integer> candidateThirdVotes = new HashMap<String, Integer>();
+  private HashMap<String, Integer> candidateFirstVotes = new HashMap<String, Integer>();
+  private HashMap<String, Integer> candidateSecondVotes = new HashMap<String, Integer>();
+  private HashMap<String, Integer> candidateThirdVotes = new HashMap<String, Integer>();
   
   ElectionData() {
-    this.ballot.add("Gompei");
-    this.ballot.add("Husky");
-    this.ballot.add("Kanye");
   }
   
   public void printBallot() {
@@ -23,32 +22,93 @@ class ElectionData {
       System.out.println(s);
     }
   }
-  
-  public void screen() {
-    this.printBallot();
-    System.out.println("Who is your primary choice to vote for?");
-    String candidate = keyboard.next();
-    votes.add(candidate);
-    System.out.println("You voted first for " + candidate);
-    System.out.println("Who is your secondary choice to vote for?");
-    String candidate2 = keyboard.next();
-    votes.add(candidate2);
-    System.out.println("You voted second for " + candidate);
-    System.out.println("Who is your third choice to vote for?");
-    String candidate3 = keyboard.next();
-    votes.add(candidate3);
-    System.out.println("You voted third for " + candidate);
+
+  public void updateBallot() {
+	  for(String n : candidateFirstVotes.keySet()) {
+		if(ballot.indexOf(n) < 0) ballot.add(n);
+	}
   }
   
-  public int countVotes(String forcand) {
-    int numvotes = 0;
-    for (String s : votes) {
-      if (s.equals(forcand))
-        numvotes = numvotes+1;
-    }
-    return numvotes;
-    }
   
+  /**
+   * method checks if name is present on ballot
+   * @param name : string of name to be checked
+   * @return boolean indicating if the name is present on the ballot
+   */
+  private Boolean namePresent(String name) {
+	  Boolean present = false;
+	  for(String b : ballot) {
+		  if(b.equals(name)) present = true;
+	  } return present;
+  }
   
+  public void processVote(String first, String second, String third) throws UnknownCandidateException, DuplicateVotesException {
+	  if(!namePresent(first)) {
+		  throw new UnknownCandidateException(first);
+	  }
+	  if(!namePresent(second)) {
+		  throw new UnknownCandidateException(second);
+	  }
+	  if(!namePresent(third)) {
+		  throw new UnknownCandidateException(third);
+	  }
+	  if(first.equals(second) || first.equals(third)) {
+		  throw new DuplicateVotesException(first);
+	  } 
+	  if(second.equals(third)) {
+		  throw new DuplicateVotesException(second);
+	  }
+	  else {
+		  candidateFirstVotes.put(first, candidateFirstVotes.get(first) + 1);
+		  candidateSecondVotes.put(second, candidateSecondVotes.get(second) + 1);
+		  candidateThirdVotes.put(third, candidateThirdVotes.get(third) + 1);
+	  }
+  } 
+  
+  public void addCandidate(String name) throws CandidateExistsException{
+	  if(this.candidateFirstVotes.containsKey(name)) {
+		  throw new CandidateExistsException(name);
+	  } else{
+		  candidateFirstVotes.put(name, 0);
+		  candidateSecondVotes.put(name, 0);
+		  candidateThirdVotes.put(name, 0);
+	  }
+  }
+  
+  public String findWinnerMostFirstVotes() {
+	  int totalVotes = 0;
+	  for(Integer i : candidateFirstVotes.values()) {
+		  totalVotes += i;
+	  }
+	  String winner = "Runoff required";
+	  for(String name : candidateFirstVotes.keySet()) {
+		  if(candidateFirstVotes.get(name) > (totalVotes / 2)) {
+			  winner = name;
+		  }
+	  }
+	  return winner;
+  } 
+  
+  public String findWinnerMostPoints() {
+	  HashMap<String, Integer> points = new HashMap<String, Integer>();
+	  for(String name : candidateFirstVotes.keySet()) {
+		  points.put(name, candidateFirstVotes.get(name) * 3);
+	  }
+	  for(String name : candidateFirstVotes.keySet()) {
+		  points.put(name, points.get(name) + (candidateFirstVotes.get(name) * 2));
+	  }
+	  for(String name : candidateThirdVotes.keySet()) {
+		  points.put(name, points.get(name) + candidateThirdVotes.get(name));
+	  }
+	  String winner = "none";
+	  int max = 0;
+	  for(String name : points.keySet()) {
+		  if(points.get(name) > max) {
+			  max = points.get(name);
+			  winner = name;
+		  }
+	  }
+	  return winner;
+  }
  
 }
