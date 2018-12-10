@@ -13,6 +13,7 @@ public class Examples {
 		ED.addCandidate("Gompei");
 		ED.addCandidate("Husky");
 		ED.addCandidate("Kanye");
+		ED.updateBallot();
 		ED.processVote("Kanye", "Gompei", "Husky");
 		ED.processVote("Kanye", "Gompei", "Husky");
 		ED.processVote("Kanye", "Gompei", "Husky");
@@ -30,6 +31,7 @@ public class Examples {
 		ED2.addCandidate("Gompei");
 		ED2.addCandidate("Husky");
 		ED2.addCandidate("Kanye");
+		ED2.updateBallot();
 		ED2.processVote("Kanye", "Gompei", "Husky");
 		ED2.processVote("Kanye", "Gompei", "Husky");
 		ED2.processVote("Kanye", "Gompei", "Husky");
