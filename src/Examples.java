@@ -61,4 +61,20 @@ public class Examples {
 		assertEquals(ED2.findWinnerMostPoints(), "Gompei");
 	}
 
+	@Test (expected = DuplicateVotesException.class)
+    public void testDuplicate() throws DuplicateVotesException, UnknownCandidateException {
+	    ED2.processVote("Kanye", "Kanye", "Kanye");
+
+    }
+    @Test (expected = UnknownCandidateException.class)
+    public void testUnknown() throws DuplicateVotesException, UnknownCandidateException {
+        ED2.processVote("Kanye", "Mom", "Dad");
+
+    }
+
+    @Test (expected = CandidateExistsException.class)
+    public void testExists() throws CandidateExistsException {
+        ED2.addCandidate("Kanye");
+    }
+
 }

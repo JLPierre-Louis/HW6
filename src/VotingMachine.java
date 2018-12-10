@@ -36,7 +36,13 @@ public class VotingMachine {
 	    	screen(); 
 	    }
 	  }
-	
+
+	/**
+	 *
+	 * @param name
+	 * @return returns if candidate was added or already exists.
+	 * @throws CandidateExistsException checks if candidate already exists
+	 */
 	private String addWriteIn(String name) throws CandidateExistsException {
 		String message = "Candidate added successfully.";
 		try { data.addCandidate(name); }

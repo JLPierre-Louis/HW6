@@ -36,11 +36,18 @@ class ElectionData {
    * @return boolean indicating if the name is present on the ballot
    */
   private Boolean namePresent(String name) {
-	  Boolean present = false;
-	  for(String b : ballot) {
-		  if(b.equals(name)) present = true;
-	  } return present;
+	  return ballot.contains(name);
   }
+
+    /**
+     * Records the votes based on input. Checks for exceptions.
+     * @param first top voter
+     * @param second second vote
+     * @param third third vote
+     * @throws UnknownCandidateException - If vote for someone who doesn't exist
+     * @throws DuplicateVotesException - if there are duplicate votes
+     *
+     */
   
   public void processVote(String first, String second, String third) throws UnknownCandidateException, DuplicateVotesException {
 	  if(!namePresent(first)) {
@@ -63,8 +70,13 @@ class ElectionData {
 		  candidateSecondVotes.put(second, candidateSecondVotes.get(second) + 1);
 		  candidateThirdVotes.put(third, candidateThirdVotes.get(third) + 1);
 	  }
-  } 
-  
+  }
+
+    /**
+     * Adds a candidate to the ballot
+     * @param name
+     * @throws CandidateExistsException - If candidate already exists
+     */
   public void addCandidate(String name) throws CandidateExistsException{
 	  if(this.candidateFirstVotes.containsKey(name)) {
 		  throw new CandidateExistsException(name);
@@ -72,9 +84,15 @@ class ElectionData {
 		  candidateFirstVotes.put(name, 0);
 		  candidateSecondVotes.put(name, 0);
 		  candidateThirdVotes.put(name, 0);
+		  ballot.add(name);
 	  }
   }
-  
+
+    /**
+     *
+     * @return Returns the winner with the most first votes, if two candidates have the same num votes
+     * will say runoff required
+     */
   public String findWinnerMostFirstVotes() {
 	  int totalVotes = 0;
 	  for(Integer i : candidateFirstVotes.values()) {
@@ -87,8 +105,12 @@ class ElectionData {
 		  }
 	  }
 	  return winner;
-  } 
-  
+  }
+
+    /**
+     *
+     * @return Finds the candidate with the most points
+     */
   public String findWinnerMostPoints() {
 	  HashMap<String, Integer> points = new HashMap<String, Integer>();
 	  for(String name : candidateFirstVotes.keySet()) {
